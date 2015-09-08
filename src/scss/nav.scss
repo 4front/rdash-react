@@ -1,0 +1,14 @@
+body {
+  background-color: transparent;
+}
+
+nav {
+  padding: 10px;
+  margin: 4px;
+}
+
+.page-title {
+  @include large-text;
+  padding: 4px;
+  margin-top: 10px;
+}
