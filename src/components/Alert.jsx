@@ -4,14 +4,14 @@ export default class Alert extends React.Component {
   render() {
     return (
       <div className={`alert alert-${this.props.type}`}>
-        <h2>Alert</h2>
+        {this.props.children}
       </div>
     );
   }
 }
 
 Alert.propTypes = {
-  type: React.PropTypes.oneOf(['warning', 'critical', 'info'])
+  type: React.PropTypes.oneOf(['warning', 'danger', 'info'])
 };
 
 Alert.defaultProps = {
