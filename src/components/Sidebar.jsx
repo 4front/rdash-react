@@ -1,13 +1,18 @@
 import React from 'react';
 import {Link} from 'react-router';
+import dispatcher from '../lib/dispatcher';
 
 export default class Sidebar extends React.Component {
+  toggleSidebar() {
+    dispatcher.emit('toggleSidebar');
+  }
+
   render() {
     return (
       <div id="sidebar-wrapper">
         <ul className="sidebar">
           <li className="sidebar-main">
-            <a ng-click="toggleSidebar()">
+            <a onClick={this.toggleSidebar.bind(this)}>
               Dashboard
               <span className="menu-icon glyphicon glyphicon-transfer"></span>
             </a>
