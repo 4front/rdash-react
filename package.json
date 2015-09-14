@@ -90,7 +90,9 @@
       },
       {
         "module": "webpage",
-        "pushState": true
+        "options": {
+          "pushState": true
+        }
       }
     ]
   }

@@ -56,8 +56,14 @@ export default class Login extends React.Component {
         }
       })
       .catch((err) => {
+        var errorCode;
+        if (err.response && err.response.body)
+          errorCode = err.response.body.code;
+        else
+          errorCode = 'unknown';
+
         this.setState({
-          errorCode: err.response.body.code,
+          errorCode: errorCode,
           loggingIn: false
         });
       });

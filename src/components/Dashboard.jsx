@@ -4,6 +4,8 @@ import SummaryWidget from './SummaryWidget';
 import Servers from './Servers';
 import Users from './Users';
 import requireAuth from '../lib/require-auth';
+import request from '../lib/request';
+import {random} from '../lib/util';
 
 export default requireAuth(class Dashboard extends React.Component {
   constructor() {
@@ -17,17 +19,16 @@ export default requireAuth(class Dashboard extends React.Component {
   componentWillMount() {
     // Simulate network latency making an API call to get top level
     // metrics.
-    setTimeout(() => {
-      this.setState({
-        metricsLoading: false,
-        topLevelMetrics: {
-          users: 80,
-          servers: 16,
-          documents: 225,
-          tickets: 62
-        }
+    request.get('/stubdata/top-level-metrics.json')
+      .then((res) => {
+        // Simulating some network latency
+        window.setTimeout(() => {
+          this.setState({
+            metricsLoading: false,
+            topLevelMetrics: res.body
+          });
+        }, random(100, 600));
       });
-    }, 1500);
   }
 
   render() {

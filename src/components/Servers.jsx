@@ -3,6 +3,7 @@ import Loading from './Loading';
 import request from '../lib/request';
 import TableWidget from './TableWidget';
 import StatusIcon from './StatusIcon';
+import {random} from '../lib/util';
 
 export default class Servers extends React.Component {
   constructor() {
@@ -17,15 +18,18 @@ export default class Servers extends React.Component {
   componentWillMount() {
     request.get('/stubdata/servers.json')
       .then((res) => {
-        // Map each server JSON object to what should be rendered in the table cells.
-        let servers = res.body.map((server) => {
-          return [server.name, server.ip, <StatusIcon status={server.status}/>];
-        });
+        // Simulating network latency
+        setTimeout(() => {
+          // Map each server JSON object to what should be rendered in the table cells.
+          let servers = res.body.map((server) => {
+            return [server.name, server.ip, <StatusIcon status={server.status}/>];
+          });
 
-        this.setState({
-          loading: false,
-          servers: servers
-        });
+          this.setState({
+            loading: false,
+            servers: servers
+          });
+        }, random(100, 600));
       });
   }
 

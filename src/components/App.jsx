@@ -2,6 +2,7 @@ import React from 'react';
 import Login from './Login';
 import Dashboard from './Dashboard';
 import Tables from './Tables';
+import Profile from './Profile';
 import MainLayout from './MainLayout';
 
 import Router from 'react-router';
@@ -26,6 +27,7 @@ var routes = (
     <Route handler={MainLayout}>
       <DefaultRoute name="dashboard" handler={Dashboard} />
       <Route name="tables" handler={Tables}/>
+      <Route name="profile" handler={Profile}/>
     </Route>
   </Route>
 );
