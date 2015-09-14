@@ -35,6 +35,7 @@ gulp.task('copy', function() {
    gulp.src('./src/img/**/*').pipe(gulp.dest('build/' + buildType + '/img'));
    gulp.src('./bower_components/rdash-ui/dist/fonts/**/*').pipe(gulp.dest('build/' + buildType + '/fonts'));
    gulp.src('./src/*.html').pipe(gulp.dest('build/' + buildType));
+   gulp.src('./stubdata/*.json').pipe(gulp.dest('build/' + buildType + '/stubdata'));
 });
 
 gulp.task('sass', function() {

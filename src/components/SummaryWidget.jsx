@@ -1,7 +1,8 @@
 import React from 'react';
 import {Link} from 'react-router';
+import Loading from './Loading';
 
-export default class DashboardWidget extends React.Component {
+export default class SummaryWidget extends React.Component {
   constructor() {
     super();
   }
@@ -10,10 +11,16 @@ export default class DashboardWidget extends React.Component {
     if (this.props.loading !== true)
       return null;
 
+    return <Loading/>;
+  }
+
+  renderContents() {
+    if (this.props.loading === true)
+      return null;
+
     return (
-      <div className="loading">
-        <div className="double-bounce1"/>
-        <div className="double-bounce2"/>
+      <div className="widget-content">
+        {this.props.children}
       </div>
     );
   }
@@ -23,9 +30,7 @@ export default class DashboardWidget extends React.Component {
       <div className="widget">
         <div className="widget-body">
           {this.renderLoading()}
-          <div className="widget-content">
-            {this.props.children}
-          </div>
+          {this.renderContents()}
         </div>
       </div>
     );

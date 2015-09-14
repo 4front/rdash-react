@@ -1,0 +1,29 @@
+[
+  {
+    "name": "RDVMPC001",
+    "ip": "238.103.133.37",
+    "status": "healthy"
+  },
+  {
+    "name": "RDVMPC002",
+    "ip": "68.66.63.170",
+    "status": "healthy"
+  },
+  {
+    "name": "RDVMPC003",
+    "ip": "76.117.212.33",
+    "status": "critical",
+    "message": "Server Down!"
+  },
+  {
+    "name": "RDVMPC004",
+    "ip": "91.88.224.5",
+    "status": "healthy"
+  },
+  {
+    "name": "RDVMPC005",
+    "ip": "136.80.122.212",
+    "status": "warning",
+    "message": "Could not connect!"
+  }
+]
