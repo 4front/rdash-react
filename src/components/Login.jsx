@@ -45,7 +45,7 @@ export default class Login extends React.Component {
       })
       .then((res) => {
         // Assign the user to global state
-        globalState.user = res.body;
+        globalState.user = res.body.user;
 
         // Redirect to whatever URL the user was originally trying to access
         var nextPath = router.getCurrentQuery().nextPath;
