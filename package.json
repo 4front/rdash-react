@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "watch": "gulp watch",
-    "build:debug": "gulp build",
-    "build:release": "gulp build --release"
+    "build:debug": "NODE_ENV=development gulp build",
+    "build:release": "NODE_ENV=production gulp build --release"
   },
   "repository": {
     "type": "git",
@@ -34,7 +34,6 @@
   "devDependencies": {
     "babelify": "^5.0.4",
     "browserify": "^9.0.3",
-    "del": "^1.1.1",
     "gulp": "^3.8.11",
     "gulp-concat": "^2.6.0",
     "gulp-if": "^1.2.5",
@@ -48,6 +47,8 @@
     "merge": "^1.2.0",
     "reactify": "^1.1.0",
     "request": "^2.61.0",
+    "rimraf": "^2.4.3",
+    "run-sequence": "^1.1.4",
     "uglifyify": "^3.0.1",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0",

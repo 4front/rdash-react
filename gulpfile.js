@@ -1,4 +1,5 @@
 var gulp = require('gulp');
+var rimraf = require('rimraf');
 var uglify = require('gulp-uglify');
 var watch = require('gulp-watch');
 var argv = require('yargs').argv;
@@ -17,6 +18,7 @@ var gutil = require('gulp-util');
 var merge = require('merge');
 var rename = require('gulp-rename');
 var concat = require('gulp-concat');
+var runSequence = require('run-sequence');
 
 var buildType = argv.release ? 'release' : 'debug';
 
@@ -31,12 +33,16 @@ var browserifyArgs = {
   debug: buildType === 'debug' // generates inline sourcemaps
 };
 
-gulp.task('copy', function() {
-   gulp.src('./src/img/**/*').pipe(gulp.dest('build/' + buildType + '/img'));
-   gulp.src('./bower_components/rdash-ui/dist/fonts/**/*').pipe(gulp.dest('build/' + buildType + '/fonts'));
-   gulp.src('./src/*.html').pipe(gulp.dest('build/' + buildType));
-   gulp.src('./stubdata/*.json').pipe(gulp.dest('build/' + buildType + '/stubdata'));
+gulp.task('clean', function(callback) {
+  rimraf('./build/' + buildType, callback);
 });
+
+gulp.task('copy', function() {
+  gulp.src('./src/img/*').pipe(gulp.dest('build/' + buildType + '/img'));
+  gulp.src('./bower_components/rdash-ui/dist/fonts/**/*').pipe(gulp.dest('build/' + buildType + '/fonts'));
+  gulp.src('./src/*.html').pipe(gulp.dest('build/' + buildType));
+  gulp.src('./stubdata/*.json').pipe(gulp.dest('build/' + buildType + '/stubdata'));
+})
 
 gulp.task('sass', function() {
   // Build the main
@@ -46,7 +52,9 @@ gulp.task('sass', function() {
     .pipe(gulp.dest('build/' + buildType + '/css'));
 });
 
-gulp.task('build', ['copy', 'sass', 'browserify']);
+gulp.task('build', function(callback) {
+  runSequence('clean', ['sass', 'copy', 'browserify'], callback);
+});
 
 gulp.task('browserify', function() {
   var bundler = browserify(browserifyArgs)
@@ -57,20 +65,6 @@ gulp.task('browserify', function() {
 
 // The watch task is only intended to run for debug
 gulp.task('watch', function(cb) {
-  // Watch for changes to the build/debug directory and
-  // trigger an autoreload
-  watch(["build/debug/*"], function(event) {
-    gutil.log('autoreload', event.path);
-    request({
-      url: 'https://localhost:3000/autoreload/notify',
-      method: 'post',
-      json: {
-        files: [event.path]
-      },
-      strictSSL: false
-    });
-  });
-
   // Watch *.scss files for changes and rebuild
   // our main.css
   gulp.watch('src/scss/*.scss', ['sass']);
@@ -80,22 +74,47 @@ gulp.task('watch', function(cb) {
   var bundler = watchify(browserify(merge(browserifyArgs, watchify.args)))
     .transform(babelify, { /* opts */ });
 
-  buildBundle(bundler, this);
+  buildBundle(bundler, function(err) {
+    if (err)
+      return handleError(err);
+
+    // Watch for changes to the build/debug directory and
+    // trigger an autoreload
+    watch(["build/debug/*"], function(event) {
+      gutil.log('autoreload', event.path);
+      request({
+        url: 'https://localhost:3000/autoreload/notify',
+        method: 'post',
+        json: {
+          files: [event.path]
+        },
+        strictSSL: false
+      });
+    });
+  });
 
   bundler.on('update', function () {
-    gutil.log('browserify bundle updated');
-    buildBundle(bundler);
+    buildBundle(bundler, function(err) {
+      if (err)
+        return handleError(err);
+
+      gutil.log('browserify bundle updated');
+    });
   });
 });
 
-function buildBundle(bundler) {
+function buildBundle(bundler, callback) {
   return bundler.bundle()
-    .on('error', handleError)
+    .on('error', callback || handleError)
     .pipe(source(entryPoint))
     .pipe(buffer())
     .pipe(rename(buildType === 'debug' ? 'bundle.js' : 'bundle.min.js'))
     .pipe(gulpif(buildType === 'release', uglify()))
-    .pipe(gulp.dest('build/' + buildType));
+    .pipe(gulp.dest('build/' + buildType))
+    .on('end', function() {
+      if (callback)
+        callback();
+    });
 }
 
 function handleError(err) {
